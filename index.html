@@ -197,6 +197,36 @@
             50% { transform: translate(-50%, -50%) rotate(-45deg) translateY(-10px); }
         }
 
+        /* Tricep Kickback Animation */
+        .kickback-anim .arm-kb {
+            width: 50px;
+            height: 8px;
+            background: linear-gradient(90deg, #ff6b35, #f7931e);
+            border-radius: 4px;
+            position: absolute;
+            top: 60%;
+            left: 40%;
+            transform-origin: left center;
+            transform: translate(-50%, -50%) rotate(20deg);
+            animation: kickback 1.5s ease-in-out infinite;
+        }
+
+        .kickback-anim .dumbbell-kb {
+            width: 12px;
+            height: 18px;
+            background: #666;
+            border-radius: 3px;
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes kickback {
+            0%, 100% { transform: translate(-50%, -50%) rotate(20deg); }
+            50% { transform: translate(-50%, -50%) rotate(-10deg); }
+        }
+
         /* Tricep Extension Animation */
         .tricep-anim .arm-ext {
             width: 50px;
@@ -586,6 +616,53 @@
             </div>
         </div>
 
+        <!-- Dumbbell Tricep Kickback -->
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <div class="animation-container kickback-anim">
+                    <div class="arm-kb">
+                        <div class="dumbbell-kb"></div>
+                    </div>
+                </div>
+                <div class="exercise-info">
+                    <h3>Dumbbell Tricep Kickback</h3>
+                    <div class="target">Dumbbells • Triceps</div>
+                </div>
+            </div>
+            <div class="sets-container">
+                <div class="set-row">
+                    <div class="set-info">
+                        <div class="set-number">1</div>
+                        <div class="set-details">
+                            <span class="weight">10 lbs</span> • 
+                            <span class="reps">15 reps</span>
+                        </div>
+                    </div>
+                    <button class="check-btn" onclick="toggleSet(this)"></button>
+                </div>
+                <div class="set-row">
+                    <div class="set-info">
+                        <div class="set-number">2</div>
+                        <div class="set-details">
+                            <span class="weight">15 lbs</span> • 
+                            <span class="reps">15 reps</span>
+                        </div>
+                    </div>
+                    <button class="check-btn" onclick="toggleSet(this)"></button>
+                </div>
+                <div class="set-row">
+                    <div class="set-info">
+                        <div class="set-number">3</div>
+                        <div class="set-details">
+                            <span class="weight">15 lbs</span> • 
+                            <span class="reps">15 reps</span>
+                        </div>
+                    </div>
+                    <button class="check-btn" onclick="toggleSet(this)"></button>
+                </div>
+            </div>
+        </div>
+
         <!-- Overhead Tricep Extension -->
         <div class="exercise-card">
             <div class="exercise-header">
@@ -686,7 +763,7 @@
             <h2>Workout Summary</h2>
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-value" id="totalSets">17</div>
+                    <div class="stat-value" id="totalSets">20</div>
                     <div class="stat-label">Total Sets</div>
                 </div>
                 <div class="stat">
