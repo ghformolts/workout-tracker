@@ -3,901 +3,867 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vyb's Workout Tracker</title>
+    <title>Workout Log</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-hover: #1a1a1a;
+            --text: #e5e5e5;
+            --text-muted: #666;
+            --accent: #22c55e;
+            --accent-dim: #166534;
+            --danger: #ef4444;
+            --warning: #f59e0b;
         }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            color: #fff;
-            padding: 20px;
+            line-height: 1.5;
         }
-
+        
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
         .header {
-            text-align: center;
-            padding: 30px 0;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .date {
-            color: #888;
-            font-size: 1rem;
-        }
-
-        .workout-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .exercise-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .exercise-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(255,107,53,0.2);
-        }
-
-        .exercise-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--surface);
             margin-bottom: 20px;
         }
-
-        .animation-container {
-            width: 80px;
-            height: 80px;
-            position: relative;
+        
+        .header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; }
+        .header .date { color: var(--text-muted); font-size: 14px; }
+        
+        /* Stats Row */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
         }
-
-        /* Treadmill Animation */
-        .treadmill-anim .belt {
-            width: 70px;
-            height: 20px;
-            background: linear-gradient(90deg, #333 0%, #555 50%, #333 100%);
-            background-size: 20px 100%;
-            border-radius: 5px;
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: beltMove 0.5s linear infinite;
+        
+        .stat-card {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
         }
-
-        .treadmill-anim .runner {
-            width: 25px;
-            height: 35px;
-            position: absolute;
-            top: 35%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: run 0.6s ease-in-out infinite;
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
         }
-
-        .treadmill-anim .runner::before {
-            content: '';
-            width: 12px;
-            height: 12px;
-            background: #ff6b35;
-            border-radius: 50%;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
         }
-
-        .treadmill-anim .runner::after {
-            content: '';
-            width: 20px;
-            height: 20px;
-            background: #f7931e;
-            border-radius: 3px;
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+        
+        /* Quick Log */
+        .quick-log {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
-
-        @keyframes beltMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 20px 0; }
+        
+        .quick-log h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
         }
-
-        @keyframes run {
-            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-5px); }
+        
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
         }
-
-        /* Push Up Animation */
-        .pushup-anim .body {
-            width: 60px;
-            height: 15px;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
+        
+        .exercise-btn {
+            background: var(--surface-hover);
+            border: 1px solid transparent;
+            color: var(--text);
+            padding: 16px 8px;
             border-radius: 10px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: pushup 1.5s ease-in-out infinite;
-        }
-
-        .pushup-anim .head {
-            width: 20px;
-            height: 20px;
-            background: #f7931e;
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 10px;
-            transform: translateY(-50%);
-            animation: pushup 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pushup {
-            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-15px); }
-        }
-
-        /* Chest Press Animation */
-        .chestpress-anim .bar {
-            width: 70px;
-            height: 8px;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
-            border-radius: 4px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: press 2s ease-in-out infinite;
-        }
-
-        .chestpress-anim .weight {
-            width: 15px;
-            height: 25px;
-            background: #666;
-            border-radius: 3px;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            animation: press 2s ease-in-out infinite;
-        }
-
-        .chestpress-anim .weight.left { left: 5px; }
-        .chestpress-anim .weight.right { right: 5px; }
-
-        @keyframes press {
-            0%, 100% { transform: translate(-50%, -50%) scaleX(1); }
-            50% { transform: translate(-50%, -50%) scaleX(0.7); }
-        }
-
-        /* Cable Fly Animation */
-        .cablefly-anim .cable {
-            width: 2px;
-            height: 40px;
-            background: #666;
-            position: absolute;
-            top: 0;
-            animation: cable 2s ease-in-out infinite;
-        }
-
-        .cablefly-anim .cable.left { left: 20px; }
-        .cablefly-anim .cable.right { right: 20px; }
-
-        .cablefly-anim .handle {
-            width: 15px;
-            height: 15px;
-            background: #ff6b35;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 20px;
-            animation: fly 2s ease-in-out infinite;
-        }
-
-        @keyframes cable {
-            0%, 100% { height: 40px; }
-            50% { height: 25px; }
-        }
-
-        @keyframes fly {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(15px); }
-        }
-
-        /* Arnold Press Animation */
-        .arnold-anim .dumbbell {
-            width: 50px;
-            height: 10px;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
-            border-radius: 5px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: arnold 2s ease-in-out infinite;
-        }
-
-        .arnold-anim .dumbbell::before,
-        .arnold-anim .dumbbell::after {
-            content: '';
-            width: 12px;
-            height: 20px;
-            background: #666;
-            border-radius: 3px;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .arnold-anim .dumbbell::before { left: -6px; }
-        .arnold-anim .dumbbell::after { right: -6px; }
-
-        @keyframes arnold {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            50% { transform: translate(-50%, -50%) rotate(-45deg) translateY(-10px); }
-        }
-
-        /* Tricep Kickback Animation */
-        .kickback-anim .arm-kb {
-            width: 50px;
-            height: 8px;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
-            border-radius: 4px;
-            position: absolute;
-            top: 60%;
-            left: 40%;
-            transform-origin: left center;
-            transform: translate(-50%, -50%) rotate(20deg);
-            animation: kickback 1.5s ease-in-out infinite;
-        }
-
-        .kickback-anim .dumbbell-kb {
-            width: 12px;
-            height: 18px;
-            background: #666;
-            border-radius: 3px;
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        @keyframes kickback {
-            0%, 100% { transform: translate(-50%, -50%) rotate(20deg); }
-            50% { transform: translate(-50%, -50%) rotate(-10deg); }
-        }
-
-        /* Tricep Extension Animation */
-        .tricep-anim .arm-ext {
-            width: 50px;
-            height: 8px;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
-            border-radius: 4px;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform-origin: left center;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            animation: extend 2s ease-in-out infinite;
-        }
-
-        .tricep-anim .dumbbell-ext {
-            width: 15px;
-            height: 20px;
-            background: #666;
-            border-radius: 3px;
-            position: absolute;
-            right: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        @keyframes extend {
-            0%, 100% { transform: translate(-50%, -50%) rotate(-45deg); }
-            50% { transform: translate(-50%, -50%) rotate(-90deg); }
-        }
-
-        /* Lateral Raise Animation */
-        .lateral-anim .arm {
-            width: 40px;
-            height: 8px;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
-            border-radius: 4px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform-origin: left center;
-            transform: translate(-50%, -50%) rotate(0deg);
-            animation: lateral 2s ease-in-out infinite;
-        }
-
-        .lateral-anim .dumbbell-small {
-            width: 10px;
-            height: 15px;
-            background: #666;
-            border-radius: 3px;
-            position: absolute;
-            right: -5px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        @keyframes lateral {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            50% { transform: translate(-50%, -50%) rotate(-60deg); }
-        }
-
-        .exercise-info h3 {
-            font-size: 1.4rem;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-
-        .exercise-info .target {
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .sets-container {
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.15s;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-
-        .set-row {
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            transition: background 0.3s;
+            gap: 6px;
         }
-
-        .set-row:hover {
-            background: rgba(255,255,255,0.08);
+        
+        .exercise-btn:hover {
+            border-color: var(--accent);
+            background: var(--bg);
         }
-
-        .set-info {
+        
+        .exercise-btn .icon { font-size: 20px; }
+        
+        /* Log Form */
+        .log-form {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--surface-hover);
+        }
+        
+        .log-form.active { display: block; }
+        
+        .form-row {
             display: flex;
-            align-items: center;
-            gap: 15px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
-
-        .set-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255,107,53,0.2);
-            color: #ff6b35;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
+        
+        .input-group {
+            flex: 1;
         }
-
-        .set-details {
-            color: #ccc;
+        
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
-        .weight {
-            color: #f7931e;
+        
+        .input-group input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--surface-hover);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 600;
-        }
-
-        .reps {
-            color: #888;
-        }
-
-        .check-btn {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.2);
-            background: transparent;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: opacity 0.15s;
+        }
+        
+        .btn-primary:hover { opacity: 0.9; }
+        
+        /* Today's Workouts */
+        .section-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-title button {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .workout-list {
+            margin-bottom: 24px;
+        }
+        
+        .workout-item {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.2s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .workout-info h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .workout-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .workout-meta .pr-badge {
+            color: var(--warning);
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        
+        .delete-btn:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* Insights */
+        .insights {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .insights h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+        
+        .streak-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .streak-day {
+            flex: 1;
+            height: 40px;
+            background: var(--surface-hover);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            font-size: 11px;
+            color: var(--text-muted);
         }
-
-        .check-btn:hover {
-            border-color: #ff6b35;
+        
+        .streak-day.active {
+            background: var(--accent);
+            color: #000;
         }
-
-        .check-btn.completed {
-            background: #ff6b35;
-            border-color: #ff6b35;
+        
+        .streak-day.today {
+            border: 2px solid var(--accent);
         }
-
-        .check-btn.completed::after {
-            content: '✓';
-            color: #fff;
-            font-size: 1.2rem;
+        
+        .volume-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 80px;
+            padding-top: 20px;
         }
-
-        .progress-bar {
+        
+        .volume-bar {
+            flex: 1;
+            background: var(--accent-dim);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .volume-bar:hover {
+            background: var(--accent);
+        }
+        
+        .volume-bar::after {
+            content: attr(data-day);
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        /* Data Actions */
+        .data-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--surface-hover);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--text-muted);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ff6b35, #f7931e);
-            transition: width 0.3s;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
             z-index: 100;
-        }
-
-        .summary {
-            background: rgba(255,107,53,0.1);
-            border: 1px solid rgba(255,107,53,0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .summary h2 {
-            color: #ff6b35;
-            margin-bottom: 15px;
-        }
-
-        .stats {
-            display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 40px;
-            flex-wrap: wrap;
+            padding: 20px;
         }
-
-        .stat {
-            text-align: center;
+        
+        .modal.active { display: flex; }
+        
+        .modal-content {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
         }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #fff;
+        
+        .modal-content h3 {
+            margin-bottom: 16px;
+            font-size: 18px;
         }
-
-        .stat-label {
-            color: #888;
-            font-size: 0.9rem;
+        
+        .modal-content textarea {
+            width: 100%;
+            height: 150px;
+            background: var(--bg);
+            border: 1px solid var(--surface-hover);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            resize: none;
+            margin-bottom: 16px;
         }
-
-        @media (max-width: 600px) {
-            .header h1 { font-size: 1.8rem; }
-            .exercise-header { flex-direction: column; text-align: center; }
-            .stats { gap: 20px; }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modal-actions button {
+            flex: 1;
+        }
+        
+        .hidden-input { display: none; }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 200;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar" id="progressBar"></div>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Log</h1>
+                <div class="date" id="currentDate"></div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="streakCount">0</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="weekVolume">0</div>
+                <div class="stat-label">This Week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalWorkouts">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+        
+        <div class="quick-log">
+            <h2>Quick Log</h2>
+            <div class="exercise-grid">
+                <button class="exercise-btn" onclick="showLogForm('Push-up')">
+                    <span class="icon">💪</span>
+                    Push-up
+                </button>
+                <button class="exercise-btn" onclick="showLogForm('Pull-up')">
+                    <span class="icon">🎯</span>
+                    Pull-up
+                </button>
+                <button class="exercise-btn" onclick="showLogForm('Squat')">
+                    <span class="icon">🦵</span>
+                    Squat
+                </button>
+                <button class="exercise-btn" onclick="showLogForm('Deadlift')">
+                    <span class="icon">🏋️</span>
+                    Deadlift
+                </button>
+                <button class="exercise-btn" onclick="showLogForm('Bench')">
+                    <span class="icon">🛏️</span>
+                    Bench
+                </button>
+                <button class="exercise-btn" onclick="showLogForm('Press')">
+                    <span class="icon">⬆️</span>
+                    Press
+                </button>
+                <button class="exercise-btn" onclick="showLogForm('Row')">
+                    <span class="icon">🚣</span>
+                    Row
+                </button>
+                <button class="exercise-btn" onclick="showLogForm('Run')">
+                    <span class="icon">🏃</span>
+                    Run
+                </button>
+            </div>
+            
+            <div class="log-form" id="logForm">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Exercise</label>
+                        <input type="text" id="exerciseName" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Weight (kg)</label>
+                        <input type="number" id="weight" placeholder="0" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label>Reps</label>
+                        <input type="number" id="reps" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Sets</label>
+                        <input type="number" id="sets" placeholder="1" value="1">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="logWorkout()">Log It</button>
+            </div>
+        </div>
+        
+        <div class="section-title">
+            <span>Today</span>
+            <button onclick="clearToday()">Clear</button>
+        </div>
+        <div class="workout-list" id="todayList">
+            <div class="empty-state">Nothing logged yet</div>
+        </div>
+        
+        <div class="insights">
+            <h2>Last 7 Days</h2>
+            <div class="streak-bar" id="streakBar"></div>
+            <div class="volume-chart" id="volumeChart"></div>
+        </div>
+        
+        <div class="data-actions">
+            <button class="btn-secondary" onclick="exportData()">Export</button>
+            <button class="btn-secondary" onclick="showImportModal()">Import</button>
+            <button class="btn-secondary" onclick="showHistory()">History</button>
+        </div>
+    </div>
     
-    <div class="header">
-        <h1>💪 Vyb's Workout</h1>
-        <div class="date" id="currentDate"></div>
-    </div>
-
-    <div class="workout-container">
-        <!-- Cardio: Treadmill -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container treadmill-anim">
-                    <div class="runner"></div>
-                    <div class="belt"></div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Cardio Run</h3>
-                    <div class="target">30:33 • 2.86 km • Effort 8/10</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">📊</div>
-                        <div class="set-details">
-                            <span class="weight">245 cal</span> • 
-                            <span class="reps">142 BPM avg</span> • 
-                            <span class="weight">101-177 range</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">📈</div>
-                        <div class="set-details">
-                            <span class="reps">2.5% incline</span> • 
-                            <span class="weight">70m climbed</span> • 
-                            <span class="reps">6.2 METs</span> • <span class="weight">109W</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Push Ups -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container pushup-anim">
-                    <div class="head"></div>
-                    <div class="body"></div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Push Ups</h3>
-                    <div class="target">Bodyweight • Chest</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">1</div>
-                        <div class="set-details">
-                            <span class="weight">Bodyweight</span> • 
-                            <span class="reps">25 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">2</div>
-                        <div class="set-details">
-                            <span class="weight">Bodyweight</span> •
-                            <span class="reps">25 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chest Press -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container chestpress-anim">
-                    <div class="weight left"></div>
-                    <div class="bar"></div>
-                    <div class="weight right"></div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Chest Press</h3>
-                    <div class="target">Machine • Chest</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">1</div>
-                        <div class="set-details">
-                            <span class="weight">25 kg</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">2</div>
-                        <div class="set-details">
-                            <span class="weight">30 kg</span> •
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">3</div>
-                        <div class="set-details">
-                            <span class="weight">34 kg</span> •
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Low-to-High Cable Fly -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container cablefly-anim">
-                    <div class="cable left"></div>
-                    <div class="cable right"></div>
-                    <div class="handle" style="left: 12px;"></div>
-                    <div class="handle" style="right: 12px;"></div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Low-to-High Cable Fly</h3>
-                    <div class="target">Cables • Upper Chest</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">1</div>
-                        <div class="set-details">
-                            <span class="weight">2.5 kg</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">2</div>
-                        <div class="set-details">
-                            <span class="weight">Bodyweight</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">3</div>
-                        <div class="set-details">
-                            <span class="weight">Bodyweight</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Arnold Press -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container arnold-anim">
-                    <div class="dumbbell"></div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Arnold Press</h3>
-                    <div class="target">Dumbbells • Shoulders</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">1</div>
-                        <div class="set-details">
-                            <span class="weight">10 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">2</div>
-                        <div class="set-details">
-                            <span class="weight">15 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">3</div>
-                        <div class="set-details">
-                            <span class="weight">15 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dumbbell Tricep Kickback -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container kickback-anim">
-                    <div class="arm-kb">
-                        <div class="dumbbell-kb"></div>
-                    </div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Dumbbell Tricep Kickback</h3>
-                    <div class="target">Dumbbells • Triceps</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">1</div>
-                        <div class="set-details">
-                            <span class="weight">10 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">2</div>
-                        <div class="set-details">
-                            <span class="weight">15 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">3</div>
-                        <div class="set-details">
-                            <span class="weight">15 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Overhead Tricep Extension -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container tricep-anim">
-                    <div class="arm-ext">
-                        <div class="dumbbell-ext"></div>
-                    </div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Overhead Tricep Extension</h3>
-                    <div class="target">Dumbbells • Triceps</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">1</div>
-                        <div class="set-details">
-                            <span class="weight">20 lbs</span> • 
-                            <span class="reps">20 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">2</div>
-                        <div class="set-details">
-                            <span class="weight">25 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">3</div>
-                        <div class="set-details">
-                            <span class="weight">25 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Lateral + Frontal Raises -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <div class="animation-container lateral-anim">
-                    <div class="arm">
-                        <div class="dumbbell-small"></div>
-                    </div>
-                </div>
-                <div class="exercise-info">
-                    <h3>Lateral + Frontal Raises</h3>
-                    <div class="target">Dumbbells • Shoulders</div>
-                </div>
-            </div>
-            <div class="sets-container">
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">1</div>
-                        <div class="set-details">
-                            <span class="weight">5 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">2</div>
-                        <div class="set-details">
-                            <span class="weight">10 lbs</span> • 
-                            <span class="reps">15 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-                <div class="set-row">
-                    <div class="set-info">
-                        <div class="set-number">3</div>
-                        <div class="set-details">
-                            <span class="weight">15 lbs</span> • 
-                            <span class="reps">8 reps</span> + 
-                            <span class="weight">10 lbs</span> • 
-                            <span class="reps">8 reps</span>
-                        </div>
-                    </div>
-                    <button class="check-btn completed" onclick="toggleSet(this)"></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="summary">
-            <h2>Workout Summary</h2>
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-value" id="totalSets">22</div>
-                    <div class="stat-label">Total Sets</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value" id="completedSets">22</div>
-                    <div class="stat-label">Completed</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value" id="percentComplete">100%</div>
-                    <div class="stat-label">Progress</div>
-                </div>
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <h3>Import Data</h3>
+            <textarea id="importData" placeholder="Paste your JSON data here..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="importData()">Import</button>
             </div>
         </div>
     </div>
+    
+    <div class="modal" id="historyModal">
+        <div class="modal-content">
+            <h3>All Workouts</h3>
+            <div id="historyList" style="max-height: 300px; overflow-y: auto; margin-bottom: 16px;"></div>
+            <button class="btn-secondary" onclick="closeModal()" style="width: 100%;">Close</button>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <input type="file" class="hidden-input" id="fileInput" accept=".json" onchange="handleFileImport(event)">
 
     <script>
-        // Set current date
+        // Data storage
+        const STORAGE_KEY = 'workout_log_v1';
+        
+        function getData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : { workouts: [], prs: {} };
+        }
+        
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        
+        // Date helpers
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+        
+        function getDateDaysAgo(days) {
+            const d = new Date();
+            d.setDate(d.getDate() - days);
+            return d.toISOString().split('T')[0];
+        }
+        
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
+        // UI helpers
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        
+        function showLogForm(exercise) {
+            const form = document.getElementById('logForm');
+            const nameInput = document.getElementById('exerciseName');
+            nameInput.value = exercise;
+            form.classList.add('active');
+            
+            // Auto-focus weight for speed
+            setTimeout(() => document.getElementById('weight').focus(), 50);
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+        
+        // Core functions
+        function logWorkout() {
+            const exercise = document.getElementById('exerciseName').value;
+            const weight = parseFloat(document.getElementById('weight').value) || 0;
+            const reps = parseInt(document.getElementById('reps').value) || 0;
+            const sets = parseInt(document.getElementById('sets').value) || 1;
+            
+            if (!reps && !weight) {
+                showToast('Enter weight or reps');
+                return;
+            }
+            
+            const data = getData();
+            const today = getToday();
+            
+            // Check for PR
+            const key = `${exercise}_${weight}kg`;
+            const prevPR = data.prs[key] || 0;
+            const isPR = reps > prevPR;
+            if (isPR) data.prs[key] = reps;
+            
+            // Add workout
+            data.workouts.push({
+                id: Date.now(),
+                date: today,
+                exercise,
+                weight,
+                reps,
+                sets,
+                volume: weight * reps * sets,
+                isPR
+            });
+            
+            saveData(data);
+            
+            // Reset form
+            document.getElementById('weight').value = '';
+            document.getElementById('reps').value = '';
+            document.getElementById('sets').value = '1';
+            document.getElementById('logForm').classList.remove('active');
+            
+            showToast(isPR ? 'PR! 🔥' : 'Logged');
+            render();
+        }
+        
+        function deleteWorkout(id) {
+            const data = getData();
+            data.workouts = data.workouts.filter(w => w.id !== id);
+            saveData(data);
+            render();
+            showToast('Deleted');
+        }
+        
+        function clearToday() {
+            const data = getData();
+            const today = getToday();
+            data.workouts = data.workouts.filter(w => w.date !== today);
+            saveData(data);
+            render();
+            showToast('Cleared');
+        }
+        
+        // Rendering
+        function render() {
+            const data = getData();
+            const today = getToday();
+            const todayWorkouts = data.workouts.filter(w => w.date === today);
+            
+            // Update stats
+            document.getElementById('streakCount').textContent = calculateStreak(data.workouts);
+            document.getElementById('weekVolume').textContent = formatVolume(getWeekVolume(data.workouts));
+            document.getElementById('totalWorkouts').textContent = data.workouts.length;
+            
+            // Render today's workouts
+            const todayList = document.getElementById('todayList');
+            if (todayWorkouts.length === 0) {
+                todayList.innerHTML = '<div class="empty-state">Nothing logged yet</div>';
+            } else {
+                todayList.innerHTML = todayWorkouts.map(w => `
+                    <div class="workout-item">
+                        <div class="workout-info">
+                            <h3>${w.exercise}</h3>
+                            <div class="workout-meta">
+                                ${w.weight > 0 ? w.weight + 'kg × ' : ''}${w.reps} reps × ${w.sets} sets
+                                ${w.isPR ? '<span class="pr-badge">PR</span>' : ''}
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteWorkout(${w.id})">×</button>
+                    </div>
+                `).join('');
+            }
+            
+            // Render streak bar
+            renderStreakBar(data.workouts);
+            
+            // Render volume chart
+            renderVolumeChart(data.workouts);
+        }
+        
+        function calculateStreak(workouts) {
+            if (workouts.length === 0) return 0;
+            
+            const workoutDays = new Set(workouts.map(w => w.date));
+            const today = new Date();
+            let streak = 0;
+            
+            for (let i = 0; i < 365; i++) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                
+                if (workoutDays.has(dateStr)) {
+                    streak++;
+                } else if (i > 0) {
+                    break;
+                }
+            }
+            
+            return streak;
+        }
+        
+        function getWeekVolume(workouts) {
+            const weekAgo = getDateDaysAgo(6);
+            return workouts
+                .filter(w => w.date >= weekAgo)
+                .reduce((sum, w) => sum + w.volume, 0);
+        }
+        
+        function formatVolume(vol) {
+            if (vol >= 1000) return (vol / 1000).toFixed(1) + 'k';
+            return vol.toString();
+        }
+        
+        function renderStreakBar(workouts) {
+            const workoutDays = new Set(workouts.map(w => w.date));
+            const today = new Date();
+            const days = ['S','M','T','W','T','F','S'];
+            
+            let html = '';
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                const dayName = days[d.getDay()];
+                const isActive = workoutDays.has(dateStr);
+                const isToday = i === 0;
+                
+                html += `<div class="streak-day ${isActive ? 'active' : ''} ${isToday ? 'today' : ''}">${dayName}</div>`;
+            }
+            
+            document.getElementById('streakBar').innerHTML = html;
+        }
+        
+        function renderVolumeChart(workouts) {
+            const dailyVolume = {};
+            for (let i = 6; i >= 0; i--) {
+                dailyVolume[getDateDaysAgo(i)] = 0;
+            }
+            
+            workouts.forEach(w => {
+                if (dailyVolume.hasOwnProperty(w.date)) {
+                    dailyVolume[w.date] += w.volume;
+                }
+            });
+            
+            const maxVol = Math.max(...Object.values(dailyVolume), 1);
+            const days = Object.keys(dailyVolume).sort();
+            
+            document.getElementById('volumeChart').innerHTML = days.map(date => {
+                const vol = dailyVolume[date];
+                const height = (vol / maxVol) * 100;
+                const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'narrow' });
+                return `<div class="volume-bar" style="height: ${Math.max(height, 4)}%" data-day="${dayName}" title="${formatVolume(vol)}kg"></div>`;
+            }).join('');
+        }
+        
+        // Data management
+        function exportData() {
+            const data = getData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `workout-log-${getToday()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Exported');
+        }
+        
+        function showImportModal() {
+            document.getElementById('importModal').classList.add('active');
+        }
+        
+        function importData() {
+            const text = document.getElementById('importData').value.trim();
+            if (!text) {
+                showToast('Paste data first');
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(text);
+                if (!data.workouts || !Array.isArray(data.workouts)) {
+                    throw new Error('Invalid format');
+                }
+                saveData(data);
+                closeModal();
+                document.getElementById('importData').value = '';
+                showToast('Imported');
+                render();
+            } catch (e) {
+                showToast('Invalid JSON');
+            }
+        }
+        
+        function showHistory() {
+            const data = getData();
+            const list = document.getElementById('historyList');
+            
+            if (data.workouts.length === 0) {
+                list.innerHTML = '<div class="empty-state">No workouts yet</div>';
+            } else {
+                const sorted = [...data.workouts].sort((a, b) => b.id - a.id);
+                list.innerHTML = sorted.map(w => `
+                    <div class="workout-item" style="margin-bottom: 8px;">
+                        <div class="workout-info">
+                            <h3>${w.exercise}</h3>
+                            <div class="workout-meta">${formatDate(w.date)} · ${w.weight}kg × ${w.reps} × ${w.sets}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('historyModal').classList.add('active');
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Enter' && document.getElementById('logForm').classList.contains('active')) {
+                if (e.ctrlKey || e.metaKey) logWorkout();
+            }
+        });
+        
+        // Init
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
             weekday: 'long',
-            year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
-
-        // Track completed sets
-        function toggleSet(btn) {
-            btn.classList.toggle('completed');
-            updateProgress();
-        }
-
-        function updateProgress() {
-            const total = document.querySelectorAll('.check-btn').length;
-            const completed = document.querySelectorAll('.check-btn.completed').length;
-            const percent = Math.round((completed / total) * 100);
-
-            document.getElementById('completedSets').textContent = completed;
-            document.getElementById('percentComplete').textContent = percent + '%';
-            document.getElementById('progressBar').style.width = percent + '%';
-        }
+        
+        render();
     </script>
 </body>
 </html>
